@@ -1,25 +1,34 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
+using SistemaPrecos.Core.Entities;
 
-namespace SistemaPrecos.Core.Models;
-
-public partial class Utilizador
+namespace SistemaPrecos.Core.Entities
 {
-    public int IdUtilizador { get; set; }
+    public enum UtilizadorTipo
+    {
+        User,
+        UserManager,
+        Admin
+    }
 
-    public string Email { get; set; } = null!;
+    public partial class Utilizador
+    {
+        public int IdUtilizador { get; set; }
 
-    public string Senha { get; set; } = null!;
+        public string Nome { get; set; } = null!;
 
-    public int IdTipo { get; set; }
+        public string Email { get; set; } = null!;
 
-    public string Nome { get; set; } = null!;
+        public string Senha { get; set; } = null!;
 
-    public virtual ICollection<AvaliacaoPreco> AvaliacaoPrecos { get; set; } = new List<AvaliacaoPreco>();
+        // Agora usamos o enum diretamente
+        public UtilizadorTipo Tipo { get; set; }
 
-    public virtual ICollection<Mensagem> Mensagems { get; set; } = new List<Mensagem>();
-
-    public virtual ICollection<Preco> Precos { get; set; } = new List<Preco>();
-
-    public virtual ICollection<Produto> Produtos { get; set; } = new List<Produto>();
+        // Exemplo de coleções relacionadas (comentadas por enquanto):
+        // public virtual ICollection<AvaliacaoPreco> AvaliacaoPrecos { get; set; } = new List<AvaliacaoPreco>();
+        // public virtual ICollection<Mensagem> Mensagens { get; set; } = new List<Mensagem>();
+        // public virtual ICollection<Preco> Precos { get; set; } = new List<Preco>();
+        // public virtual ICollection<Produto> Produtos { get; set; } = new List<Produto>();
+    }
 }
+*/

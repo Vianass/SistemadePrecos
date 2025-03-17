@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using SistemaPrecos.Core.Data;
@@ -11,9 +12,11 @@ using SistemaPrecos.Core.Data;
 namespace SistemaPrecos.Core.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250316213745_AjustesApplicationUser")]
+    partial class AjustesApplicationUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -25,12 +28,15 @@ namespace SistemaPrecos.Core.Migrations
             modelBuilder.Entity("CategoriaProduto", b =>
                 {
                     b.Property<int>("IdCategoria")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id_categoria");
 
                     b.Property<int>("IdProduto")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id_produto");
 
-                    b.HasKey("IdCategoria", "IdProduto");
+                    b.HasKey("IdCategoria", "IdProduto")
+                        .HasName("categoria_produto_pkey");
 
                     b.HasIndex("IdProduto");
 
@@ -53,6 +59,24 @@ namespace SistemaPrecos.Core.Migrations
                     b.HasIndex("IdLoja");
 
                     b.ToTable("relatorio_loja", (string)null);
+                });
+
+            modelBuilder.Entity("RelatorioProduto", b =>
+                {
+                    b.Property<int>("IdProduto")
+                        .HasColumnType("integer")
+                        .HasColumnName("id_produto");
+
+                    b.Property<int>("IdRelatorio")
+                        .HasColumnType("integer")
+                        .HasColumnName("id_relatorio");
+
+                    b.HasKey("IdProduto", "IdRelatorio")
+                        .HasName("relatorio_produto_pkey");
+
+                    b.HasIndex("IdRelatorio");
+
+                    b.ToTable("relatorio_produto", (string)null);
                 });
 
             modelBuilder.Entity("SistemaPrecos.Core.Entities.ApplicationUser", b =>
@@ -152,7 +176,7 @@ namespace SistemaPrecos.Core.Migrations
                     b.ToTable("avaliacao_preco", (string)null);
                 });
 
-            modelBuilder.Entity("SistemaPrecos.Core.Models.Categoria", b =>
+            modelBuilder.Entity("SistemaPrecos.Core.Models.Categorium", b =>
                 {
                     b.Property<int>("IdCategoria")
                         .HasColumnType("integer")
@@ -282,29 +306,31 @@ namespace SistemaPrecos.Core.Migrations
                         .HasColumnType("varchar(450)")
                         .HasColumnName("application_user_id");
 
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("character varying")
+                        .HasColumnName("categoria");
+
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasColumnType("character varying")
                         .HasColumnName("descricao");
+
+                    b.Property<int>("IdCategoria")
+                        .HasColumnType("integer")
+                        .HasColumnName("id_categoria");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("character varying")
                         .HasColumnName("nome");
 
-                    b.Property<int?>("RelatorioIdRelatorio")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("TipoCategoria")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("IdProduto")
                         .HasName("produto_pkey");
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("RelatorioIdRelatorio");
+                    b.HasIndex("IdCategoria");
 
                     b.ToTable("produto", (string)null);
                 });
@@ -349,17 +375,17 @@ namespace SistemaPrecos.Core.Migrations
 
             modelBuilder.Entity("CategoriaProduto", b =>
                 {
-                    b.HasOne("SistemaPrecos.Core.Models.Categoria", null)
+                    b.HasOne("SistemaPrecos.Core.Models.Categorium", null)
                         .WithMany()
                         .HasForeignKey("IdCategoria")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("id_categoria");
 
                     b.HasOne("SistemaPrecos.Core.Models.Produto", null)
                         .WithMany()
                         .HasForeignKey("IdProduto")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .IsRequired()
+                        .HasConstraintName("id_produto");
                 });
 
             modelBuilder.Entity("RelatorioLoja", b =>
@@ -373,6 +399,21 @@ namespace SistemaPrecos.Core.Migrations
                     b.HasOne("SistemaPrecos.Core.Models.Relatorio", null)
                         .WithMany()
                         .HasForeignKey("IdRelatoro")
+                        .IsRequired()
+                        .HasConstraintName("id_relatorio");
+                });
+
+            modelBuilder.Entity("RelatorioProduto", b =>
+                {
+                    b.HasOne("SistemaPrecos.Core.Models.Produto", null)
+                        .WithMany()
+                        .HasForeignKey("IdProduto")
+                        .IsRequired()
+                        .HasConstraintName("id_produto");
+
+                    b.HasOne("SistemaPrecos.Core.Models.Relatorio", null)
+                        .WithMany()
+                        .HasForeignKey("IdRelatorio")
                         .IsRequired()
                         .HasConstraintName("id_relatorio");
                 });
@@ -441,9 +482,13 @@ namespace SistemaPrecos.Core.Migrations
                         .IsRequired()
                         .HasConstraintName("fk_produto_user");
 
-                    b.HasOne("SistemaPrecos.Core.Models.Relatorio", null)
-                        .WithMany("IdProdutos")
-                        .HasForeignKey("RelatorioIdRelatorio");
+                    b.HasOne("SistemaPrecos.Core.Models.Categorium", "IdCategoria1")
+                        .WithMany("Produtos")
+                        .HasForeignKey("IdCategoria")
+                        .IsRequired()
+                        .HasConstraintName("id_categoria");
+
+                    b.Navigation("IdCategoria1");
 
                     b.Navigation("UserNavigation");
                 });
@@ -467,6 +512,11 @@ namespace SistemaPrecos.Core.Migrations
                     b.Navigation("IdProdutoNavigation");
                 });
 
+            modelBuilder.Entity("SistemaPrecos.Core.Models.Categorium", b =>
+                {
+                    b.Navigation("Produtos");
+                });
+
             modelBuilder.Entity("SistemaPrecos.Core.Models.Loja", b =>
                 {
                     b.Navigation("Precos");
@@ -484,11 +534,6 @@ namespace SistemaPrecos.Core.Migrations
                     b.Navigation("Precos");
 
                     b.Navigation("Relatorios");
-                });
-
-            modelBuilder.Entity("SistemaPrecos.Core.Models.Relatorio", b =>
-                {
-                    b.Navigation("IdProdutos");
                 });
 #pragma warning restore 612, 618
         }

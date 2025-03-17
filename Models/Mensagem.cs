@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using SistemaPrecos.Core.Entities;
 
 namespace SistemaPrecos.Core.Models;
 
@@ -11,7 +11,7 @@ public partial class Mensagem
 
     public DateOnly DataEnvio { get; set; }
 
-    public int IdUtilizador { get; set; }
+    public string ApplicationUserId { get; set; } = null!;
 
-    public virtual Utilizador IdUtilizadorNavigation { get; set; } = null!;
+    public virtual ApplicationUser UserNavigation { get; set; } = null!;
 }
